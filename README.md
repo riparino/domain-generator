@@ -19,13 +19,13 @@ This Python script generates and filters potential phishing domains based on a s
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-repo/phishing-domain-generator.git
+   git clone https://github.com/riparino/domain-generator.git
    ```
 
 2. Navigate to the project directory:
 
    ```bash
-   cd phishing-domain-generator
+   cd domain-generator
    ```
 
 3. Install any required dependencies (if applicable):
@@ -50,7 +50,7 @@ This Python script generates and filters potential phishing domains based on a s
    python generate_domains.py
    ```
 
-3. The script generates a file named `cleaned_validated_filtered_domains.txt` containing filtered domains.
+3. The script generates a file named `output.txt` containing filtered domains.
 
 ## Output
 
@@ -88,5 +88,5 @@ This tool is intended for ethical and defensive purposes only. Use it responsibl
 
 ## Acknowledgment
 
-This README was generated with the assistance of GPT, an AI language model by OpenAI.
+This README was generated with the assistance of GPT, an AI language model by OpenAI - specifically a variant modified using ollama.
 

@@ -62,7 +62,7 @@ generated_domains = generate_domains(keywords, modifications, tlds)
 filtered_domains = filter_domains(generated_domains, high_value_keywords, popular_tlds)
 
 # Save to file
-output_file_path = "/mnt/data/cleaned_validated_filtered_domains.txt"
+output_file_path = "output.txt"
 with open(output_file_path, "w", encoding="utf-8") as output_file:
     for domain in filtered_domains:
         output_file.write(domain + "\n")
