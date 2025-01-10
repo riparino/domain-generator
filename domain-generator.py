@@ -1,4 +1,4 @@
-# Full refined script for phishing domain generation
+# Cleaned and refined script to prevent malformed domains
 
 import itertools
 
@@ -9,10 +9,7 @@ keywords = ["example", "test", "keyword", "company"]
 tlds = [".com", ".org", ".net", ".info", ".io", ".xyz", ".co"]
 
 # Define common phishing modifications
-modifications = [
-    "", "-", ".", "secure", "auth", "login", "portal", "project", "group",
-    "1", "0", "l", "o", "s", "z", "x"
-]
+modifications = ["", "secure", "auth", "login", "portal", "project", "group", "1", "0", "z", "x"]
 
 # Define high-value keywords for filtering
 high_value_keywords = ["example", "company", "secure", "login", "auth", "group", "project"]
@@ -20,42 +17,31 @@ high_value_keywords = ["example", "company", "secure", "login", "auth", "group",
 # Define popular TLDs for filtering
 popular_tlds = [".com", ".net", ".org", ".info"]
 
-# Function to generate homograph variations of a word
-def generate_homographs(word):
-    homograph_map = {
-        "a": ["á", "à", "â", "ã", "ä", "å", "@"],
-        "e": ["é", "è", "ê", "ë"],
-        "i": ["í", "ì", "î", "ï", "1", "l"],
-        "o": ["ó", "ò", "ô", "õ", "ö", "0"],
-        "u": ["ú", "ù", "û", "ü"],
-        "c": ["ç"],
-        "s": ["$", "5"],
-        "l": ["1", "|"],
-        "t": ["+", "7"],
-        "g": ["9"],
-    }
-    variations = set([word])
-    for i, char in enumerate(word):
-        if char in homograph_map:
-            for replacement in homograph_map[char]:
-                variations.update(generate_homographs(word[:i] + replacement + word[i+1:]))
-    return variations
-
-# Function to generate domains with dashes properly placed
-def generate_domains_with_dashes(keywords, modifications, tlds):
+# Function to generate domains with dashes correctly placed
+def generate_domains(keywords, modifications, tlds):
     domains = set()
-    for i in range(2, len(keywords) + 1):  # At least 2 keywords for dashes
+
+    # Generate permutations of keywords
+    for i in range(2, len(keywords) + 1):  # At least 2 keywords for meaningful dashes
         for perm in itertools.permutations(keywords, i):
-            base_with_dashes = "-".join(perm)
+            base_with_dashes = "-".join(perm)  # Combine keywords with dashes
+
+            # Apply modifications, avoiding invalid placements
             for mod in modifications:
-                modified_base = f"{base_with_dashes}-{mod}" if mod else base_with_dashes
-                if not (modified_base.startswith("-") or modified_base.endswith("-")):
+                if mod and mod not in ["-", "."]:  # Skip invalid modifiers
+                    modified_base = f"{base_with_dashes}-{mod}"
+                else:
+                    modified_base = base_with_dashes
+
+                # Ensure no domain starts or ends with invalid structures
+                if not modified_base.startswith("-") and not modified_base.endswith("-") and ".." not in modified_base:
                     for tld in tlds:
                         domains.add(modified_base + tld)
                         domains.add(f"www.{modified_base + tld}")
+
     return domains
 
-# Function to filter domains for high-probability cases
+# Function to filter high-probability domains
 def filter_domains(domains, high_value_keywords, popular_tlds, max_domains=1000):
     filtered_domains = set()
     for domain in domains:
@@ -70,13 +56,13 @@ def filter_domains(domains, high_value_keywords, popular_tlds, max_domains=1000)
     return sorted(filtered_domains)
 
 # Generate domains
-generated_domains = generate_domains_with_dashes(keywords, modifications, tlds)
+generated_domains = generate_domains(keywords, modifications, tlds)
 
 # Filter domains
 filtered_domains = filter_domains(generated_domains, high_value_keywords, popular_tlds)
 
 # Save to file
-output_file_path = "/mnt/data/filtered_domains_output.txt"
+output_file_path = "/mnt/data/cleaned_validated_filtered_domains.txt"
 with open(output_file_path, "w", encoding="utf-8") as output_file:
     for domain in filtered_domains:
         output_file.write(domain + "\n")
